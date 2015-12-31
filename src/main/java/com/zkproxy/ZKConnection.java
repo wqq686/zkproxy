@@ -26,25 +26,25 @@ public class ZKConnection {
 	private static final int MAX_SESSION_TIMEOUT = 30 * 60 * 1000;
 	
 	/** use to connect to zk */
-	private Lock zookeeperLock = new ReentrantLock();
+	private Lock connectionLock = new ReentrantLock();
 	
 	/** zookeeper */
 	private ZooKeeper zooKeeper = null ;
 	
 	/** zk's address*/
-	private final String serverAddresses ;
+	private final String zkLocations ;
 	
 	/** session's timeout */
 	private final int sessionTimeOut ;
 	
-	public ZKConnection(String serverAddresses)  {
-		this(serverAddresses, MAX_SESSION_TIMEOUT) ;
+	public ZKConnection(String zkLocations)  {
+		this(zkLocations, MAX_SESSION_TIMEOUT) ;
 	}
 	
 	
-	public ZKConnection(String serverAddresses, int sessionTimeOut) {
-		if(CommonUtils.isEmpty(serverAddresses) || sessionTimeOut<0 ) throw new IllegalArgumentException("{serverAddresses:" + serverAddresses+", sessionTimeOut="+sessionTimeOut+"}") ;
-		this.serverAddresses = serverAddresses ;
+	public ZKConnection(String zkLocations, int sessionTimeOut) {
+		if(CommonUtils.isEmpty(zkLocations) || sessionTimeOut<0 ) throw new IllegalArgumentException("{zkLocations:" + zkLocations+", sessionTimeOut="+sessionTimeOut+"}") ;
+		this.zkLocations = zkLocations ;
 		this.sessionTimeOut = sessionTimeOut ;
 	}
 	
@@ -56,16 +56,16 @@ public class ZKConnection {
 	 * @return
 	 */
 	public ZKConnection connect(Watcher watcher) {
-		zookeeperLock.lock();
+		connectionLock.lock();
         try {
             if (zooKeeper != null) throw new IllegalStateException("ZKConnection has been started.");
             
             try {
-                zooKeeper = new ZooKeeper(serverAddresses, sessionTimeOut, watcher);
+                zooKeeper = new ZooKeeper(zkLocations, sessionTimeOut, watcher);
             } catch (IOException e) {
-                throw new IllegalStateException("Unable connect to zookeeper[" + serverAddresses + "]" + e);
+                throw new IllegalStateException("Unable connect to zookeeper[" + zkLocations + "]" + e);
             }
-        } finally { zookeeperLock.unlock(); }
+        } finally { connectionLock.unlock(); }
         return this ;
     }
 
@@ -74,7 +74,7 @@ public class ZKConnection {
 	 * close the connection.
 	 */
     public void close() {
-        zookeeperLock.lock();
+        connectionLock.lock();
         try {
             if (zooKeeper != null) {
                 zooKeeper.close();
@@ -83,7 +83,7 @@ public class ZKConnection {
         } catch (InterruptedException e) {
         	Thread.currentThread().interrupt() ;
 		} finally {
-            zookeeperLock.unlock();
+            connectionLock.unlock();
         }
     }
     

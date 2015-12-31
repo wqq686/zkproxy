@@ -9,6 +9,7 @@ import com.zkproxy.NodeChangedListener.ChangedType;
 
 public interface ZKProxy {
 	
+	
 	/**
 	 * @param path
 	 * @param klass
@@ -40,12 +41,14 @@ public interface ZKProxy {
 	 */
 	<T> T blockingGet(String path, Stat stat, Class<T> klass) ;
 	
+	
 	/**
 	 * @param path
 	 * @param value
 	 * @param mode
 	 */
 	<T> String create(String path, T value, CreateMode mode) ;
+	
 	
 	/**
 	 * @param path
@@ -79,6 +82,7 @@ public interface ZKProxy {
 	 */
 	void delete(String path) ;
 	
+	
 	/**
 	 * @param path
 	 */
@@ -91,6 +95,7 @@ public interface ZKProxy {
 	 * @return
 	 */
 	List<String> getChildren(String path) ; 
+	
 	
 	/**
 	 * 
@@ -108,6 +113,7 @@ public interface ZKProxy {
 	 */
 	<T> List<T> getChildrenObject(String path, Class<T> klass) ; 
 	
+	
 	/**
 	 * 
 	 * @param path
@@ -124,12 +130,14 @@ public interface ZKProxy {
 	 */
 	boolean exists(String path) ;
 	
+	
 	/**
 	 * 
 	 * @param path
 	 * @return
 	 */
 	boolean blockingExists(String path) ;
+	
 	
 	/**
 	 * 消息订阅
@@ -138,6 +146,7 @@ public interface ZKProxy {
 	 * @param listener
 	 */
 	void subscribeChanges(String path, ChangedType chgType, NodeChangedListener listener);
+	
 	
 	/**
 	 * 解除对节点的监听
